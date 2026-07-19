@@ -6,8 +6,14 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 set(SOURCES
     src/main.c
+
+    # fake86 stuff
     src/cpu/cpu.c
-    src/cpu/instructions.c
+    src/cpu/cpu.h
+    src/cpu/modregrm.h
+    src/cpu/config.h    
+
+    # my stuff
     src/hle/dos.c
     src/hle/bios.c
 )
