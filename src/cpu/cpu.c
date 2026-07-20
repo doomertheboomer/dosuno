@@ -101,7 +101,8 @@ extern uint8_t	portin (uint16_t portnum);
 extern uint16_t portin16 (uint16_t portnum);
 
 // DOS emulation stuff here
-extern void intHandle();
+extern void int20Handle();
+extern void int21Handle();
 
 void write86 (uint32_t addr32, uint8_t value) {
 	tempaddr32 = addr32 & 0xFFFFF;
@@ -1275,9 +1276,13 @@ void intcall86 (uint8_t intnum) {
 				return;
 			
 			case 0x21: // dos "api" call
-				intHandle();
+				int21Handle();
 				return;
 			
+			case 0x20: // close program
+				int20Handle();
+				return;
+
 			default:
 				printf("unhandled interrupt 0x%x\n", intnum);
 				break;

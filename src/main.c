@@ -20,25 +20,9 @@ uint8_t nextintr() {}
 
 // TODO: remove test file
 const uint8_t test_com_file[] = {
-    0xB4, 0x09,       // mov ah, 09h    -> DOS function: Print String
-    0xBA, 0x08, 0x01, // mov dx, 0108h  -> Memory offset where string starts (0x100 base + 8 byte header offset)
-    0xCD, 0x21,       // int 21h        -> Execute DOS service
-    0xF4,             // hlt            -> Halt CPU
-    // --- The String Data below (Offset 0x0108 onwards) ---
-    0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x2C, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, // "hello, world"
-    0x0D, 0x0A,                                                             // Carriage Return (\r), Line Feed (\n)
-    0x24                                                                    // '$' character (The required DOS string terminator)
+    0xCD, 0x20   // int 20h
 };
 
-extern uint8_t RAM[0x100000];
-extern union _bytewordregs_ regs;
-extern uint16_t segregs[4];
-extern uint16_t ip;
-extern uint8_t hltstate;
-extern void reset86();
-extern void exec86(uint32_t execloops);
-
-// TODO: remove gemini test code
 int main()
 {
     reset86();
@@ -47,7 +31,7 @@ int main()
     segregs[regss] = 0x1000;
     regs.wordregs[regsp] = 0xFFFE;
     uint32_t base_addr = (segregs[regcs] << 4) + ip;
-    memcpy(RAM + base_addr, test_com_file, 23);
+    memcpy(RAM + base_addr, test_com_file, sizeof(test_com_file));
 
     // main exec loop
     while (hltstate == 0)
