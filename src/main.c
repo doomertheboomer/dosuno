@@ -2,7 +2,7 @@
 
 // get cpu to compile
 // TODO: probably put a lot of these in their own files
-uint8_t vidmode = 0;
+uint8_t vidmode = 3;
 uint8_t updatedscreen = 0;
 uint16_t VGA_SC[0x100], VGA_CRTC[0x100], VGA_ATTR[0x100], VGA_GC[0x100];
 
@@ -18,9 +18,13 @@ void diskhandler() {}
 void timing() {}
 uint8_t nextintr() {}
 
-// TODO: remove test file
+// TODO: remove test file stage 3 direct console write
 const uint8_t test_com_file[] = {
-    0xCD, 0x20   // int 20h
+    0xB8, 0x00, 0xB8,   // mov ax, 0xB800
+    0x8E, 0xC0,         // mov es, ax
+    0x26, 0xC6, 0x06, 0x00, 0x00, 0x48, // mov byte [es:0x0000], 'H'
+    0x26, 0xC6, 0x06, 0x01, 0x00, 0x0F, // mov byte [es:0x0001], 0x0F
+    0xCD, 0x20          // int 20h
 };
 
 int main()
@@ -36,7 +40,8 @@ int main()
     // main exec loop
     while (hltstate == 0)
     {
-        exec86(1);
+        exec86(1); // execute cpu
+        // TODO: terminal handle
     }
     printf("CPU Halted\n");
 

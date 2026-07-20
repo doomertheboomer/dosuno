@@ -16,6 +16,7 @@ set(SOURCES
     # my stuff
     src/hle/dos.c
     src/hle/bios.c
+    src/hle/video.c
 )
 
 if(WIN32)
