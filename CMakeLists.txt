@@ -19,9 +19,9 @@ set(SOURCES
 )
 
 if(WIN32)
-    list(APPEND SOURCES src/platform/consoleWindows.c)
+    list(APPEND SOURCES src/platform/console/consoleWindows.c)
 else()
-    list(APPEND SOURCES src/platform/consolePosix.c)
+    list(APPEND SOURCES src/platform/console/consolePosix.c)
 endif()
 
 add_executable(dos-emu ${SOURCES})
