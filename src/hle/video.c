@@ -71,8 +71,8 @@ void dosPrint(uint32_t addr)
     // printf("DS=0x%04X, DX=0x%04X, linear=0x%05X\n", segregs[regds], regs.wordregs[regdx], (segregs[regds] << 4) + regs.wordregs[regdx]);
     // reset cursor position to appropriate place
     uint32_t pos[2]; // [x,y]
-    locToPos((cursorPos * 2), 0, pos);
-    // printf("\033[%d;%dH", pos[1] + 1, pos[0] + 1);
+    locToPos((cursorPos * 2) + 0xB8000, 0, pos);
+    printf("\033[%d;%dH", pos[1] + 1, pos[0] + 1);
     uint32_t offset = 0;
     while (1)
     {
