@@ -103,9 +103,12 @@ extern uint16_t portin16 (uint16_t portnum);
 // DOS emulation stuff here
 extern void int20Handle();
 extern void int21Handle();
+extern void updateText(uint32_t loc);
 
 void write86 (uint32_t addr32, uint8_t value) {
 	tempaddr32 = addr32 & 0xFFFFF;
+	// printf("memory write to location 0x%x\n", tempaddr32);
+
 #ifdef CPU_ADDR_MODE_CACHE
 	if (!readonly[tempaddr32]) addrcachevalid[tempaddr32] = 0;
 #endif
@@ -116,6 +119,10 @@ void write86 (uint32_t addr32, uint8_t value) {
 	if ( (tempaddr32 >= 0xA0000) && (tempaddr32 <= 0xBFFFF) ) {
 			if ( (vidmode != 0x13) && (vidmode != 0x12) && (vidmode != 0xD) && (vidmode != 0x10) ) {
 					RAM[tempaddr32] = value;
+					// text mode characters
+					if (tempaddr32 >= 0xB8000) {
+						updateText(tempaddr32);
+					}
 					updatedscreen = 1;
 				}
 			else if ( ( (VGA_SC[4] & 6) == 0) && (vidmode != 0xD) && (vidmode != 0x10) && (vidmode != 0x12) ) {
