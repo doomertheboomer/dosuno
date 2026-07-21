@@ -18,32 +18,35 @@ void diskhandler() {}
 void timing() {}
 uint8_t nextintr() {}
 
-// TODO: remove test file stage 3 direct console write
+// TODO: remove test file stage 4 dos print
 const uint8_t test_com_file[] = {
-    0xB8, 0x00, 0xB8,   // mov ax, 0xB800
-    0x8E, 0xC0,         // mov es, ax
-    0x26, 0xC6, 0x06, 0x00, 0x00, 0x48, // mov byte [es:0x0000], 'H'
-    0x26, 0xC6, 0x06, 0x01, 0x00, 0x0F, // mov byte [es:0x0001], 0x0F
-    0xCD, 0x20          // int 20h
-};
+    0xB4, 0x09,       // mov ah, 0x09
+    0xBA, 0x09, 0x01, // mov dx, 0x0109  (offset of message)
+    0xCD, 0x21,       // int 0x21
+    0xCD, 0x20,       // int 0x20  (terminate)
+    'H', 'e', 'l', 'l', 'o', ' ', 'f', 'r', 'o', 'm', ' ', 'D', 'O', 'S', '!', '$'};
 
 int main()
 {
+    printf("\033[2J\033[H"); // clear screen
     reset86();
     segregs[regcs] = 0x1000;
-    ip = 0x0100;
+    segregs[regds] = 0x1000;
+    segregs[reges] = 0x1000;
     segregs[regss] = 0x1000;
+    ip = 0x0100;
     regs.wordregs[regsp] = 0xFFFE;
     uint32_t base_addr = (segregs[regcs] << 4) + ip;
     memcpy(RAM + base_addr, test_com_file, sizeof(test_com_file));
-
+    // for (int i = 0; i < 25; i++)
+    //     printf("%02X ", RAM[0x10100 + i]);
     // main exec loop
     while (hltstate == 0)
     {
         exec86(1); // execute cpu
         // TODO: terminal handle
     }
-    printf("CPU Halted\n");
-    
+    printf("\nCPU Halted\n");
+
     return 0;
 }
